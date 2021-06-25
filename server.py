@@ -36,9 +36,32 @@ def quotes():
                     quotes_f.write("\n#" + new_quote + "-" + user +" "+ datetime.datetime.now().strftime("%d/%m/%Y"))
         elif request.form.get("counters"):
             return form()
+        else:
+            quotes = quoteList()
+            for quote in quotes:
+                query = (quote[0]+quote[1])
+                #print(query)
+                #print(request.form[query])
+                if request.form.get(query):
+                    #print("Found")
+                    quotes.remove(quote)
+                    with open("cookies/quotes.txt", "w") as quotes_f:
+                        for line in quotes:
+                            quotes_f.write("\n#" + line[0] +line[1].strip())
+                    break
+
+
+
+    
+             
+        #print(quotes)
+    quotes = quoteList()            
+    return render_template("outofcontext.html", quotes=quotes)
+
+
+def quoteList():
+    quotes = []
     with open("cookies/quotes.txt", "r") as quotes_f:
-        quote = ""
-        quotes = []
         lines = quotes_f.readlines()
         line = ""
         for l in lines:
@@ -51,7 +74,4 @@ def quotes():
             temp.append(l[l.find("-"):])
             if temp[0].strip() !="":
                 quotes.append(temp)
-             
-        #print(quotes)
-                
-    return render_template("outofcontext.html", quotes=quotes)
+    return quotes
