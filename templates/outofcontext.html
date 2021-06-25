@@ -12,7 +12,16 @@
 		<option value="rachel">Rachel</option>
 		<option value="rose">Rose</option>
 	</select>
-	<button name="postquote" id="postquote">Post</button>
+	<button name="postquote" id="postquote">Post</button><br><br>
+
+	{% for quote in quotes %}
+		<div id="quotediv" style="border-style: solid; border-top-color: blue; border-bottom-color: darkred; border-width: 1px;">
+		{% for sentence in quote %}
+			<p style="padding: 1rem;">{{sentence}}</p>
+		{% endfor %}
+		</div>
+		<br>
+	{% endfor %}
 	
 		
 		

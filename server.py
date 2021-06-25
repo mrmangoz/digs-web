@@ -21,3 +21,18 @@ def form():
         labels = eval(labels_string_builder[:-1])
 
     return render_template("index.html", labels=labels)
+
+@app.route('/outofcontext', methods=['GET', 'POST'])
+def quotes():
+    with open("cookies/quotes.txt", "r") as quotes_f:
+        quote = ""
+        quotes = []
+        for line in quotes_f:
+            if line[0] == "-":
+                quotes.append({quote , line})
+                quote = ''
+            else:
+                quote += line
+        print(quotes)
+                
+    return render_template("outofcontext.html", quotes=quotes)
