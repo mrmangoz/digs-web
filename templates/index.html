@@ -1,7 +1,13 @@
 <form action="/index" method="POST">
 	<h1>DIGS COUNTERS</h1>
-	<label for="chris_counter">Chris Counter:</label><br>
-
+	<label for="new">Add new tally</label><br>
+	<label for="tally_name">Tally name</label><br>
+	<input name="new_tally_name"><br>
+	<input type="button" onClick="window.location.href='/index'" value="Add Tally"/><br>
+	<label for="tallies">Tallies:</label><br>
+	{% for label in labels %}
+	<label for={{loop.index}}>{{label}}:</label><br>
+	{% endfor %}
 
 
 </form>

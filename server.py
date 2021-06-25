@@ -13,4 +13,11 @@ def index():
 
 @app.route('/index', methods=['GET', 'POST'])
 def form():
-    return render_template("index.html")
+    with open("cookies/labels.txt", "r") as labels_f:
+        labels_string_builder = ""
+        for line in labels_f:
+            labels_string_builder += '"' + line.strip("\n") +'"' + ","
+        print(labels_string_builder[:-1])
+        labels = eval(labels_string_builder[:-1])
+
+    return render_template("index.html", labels=labels)
