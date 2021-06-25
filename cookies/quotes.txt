@@ -1,9 +1,1 @@
-This is a quote
-in multi line format
--Cameron 25/06/2021
 
-This is a quote as a single line it  is very long and should hopefully wrap correctly
--Oliver
-
-Test 
--

@@ -1,18 +1,18 @@
 <form action="/outofcontext" method="POST">
-	<button name="counters" id="counters">Counters</button>
-	<button name="quotes" id="quotes">Quotes</button><br>
+	<button type="submit" name="counters" id="counters" value="counters">Counters</button>
+	<button type="submit" name="quotes" id="quotes"value="quotes">Quotes</button><br>
 	<h1>The Enchiridion</h1>
 	<textarea id="newquote" name="newquote" rows="5" cols="50"></textarea>
 	<br>
-	<select name="homies" id="users">
-		<option value="cameron">Cameron</option>
-		<option value="chris">Chris</option>
-		<option value="ciaran">Ciaran</option>
-		<option value="oliver">Oliver</option>
-		<option value="rachel">Rachel</option>
-		<option value="rose">Rose</option>
+	<select name="homies" id="homies">
+		<option value="Cameron">Cameron</option>
+		<option value="Chris">Chris</option>
+		<option value="Ciaran">Ciaran</option>
+		<option value="Oliver">Oliver</option>
+		<option value="Rachel">Rachel</option>
+		<option value="Rose">Rose</option>
 	</select>
-	<button name="postquote" id="postquote">Post</button><br><br>
+	<button type="submit" name="postquote" value="postquote" >Post</button><br><br>
 
 	{% for quote in quotes %}
 		<div id="quotediv" style="border-style: solid; border-top-color: blue; border-bottom-color: darkred; border-width: 1px;">
