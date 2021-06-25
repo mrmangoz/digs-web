@@ -3,8 +3,8 @@ tally for digs
 
 HTML Templates ---> /templates
 
-CSS --------------> /static
+CSS -----------------> /static
 
 Main Python code -> server.py
 
-run server -------> ./start.sh
+run server ----------> ./start.sh
