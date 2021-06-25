@@ -1,6 +1,7 @@
 from flask import Flask, request, render_template, flash, make_response, redirect, url_for
 import datetime
 import dateutil.parser
+from werkzeug.datastructures import Range
 
 
 app = Flask(__name__)
@@ -13,16 +14,40 @@ def index():
 
 @app.route('/index', methods=['GET', 'POST'])
 def form():
+    labels = counterList()
     if request.method =="POST":
         if request.form.get("quotes"):
             return quotes()
-    with open("cookies/labels.txt", "r") as labels_f:
-        labels_string_builder = ""
-        for line in labels_f:
-            labels_string_builder += '"' + line.strip("\n") +'"' + ","
-        print(labels_string_builder[:-1])
-        labels = eval(labels_string_builder[:-1])
+        elif request.form.get("addtally"):
+            try: 
+                request.form["autoincrement"]
+                increment = True
+            except:
+                increment = False
+            name = request.form["new_tally_name"]
+            name = name.replace("\n","")
+            dupe = False
+            for l in labels:
+                if name in l:
+                    dupe = True
+            if not dupe:
+                with open("cookies/labels.txt","a") as labels_f:
+                    if increment:
+                        name = "auto"+name
+                    labels_f.write("\n#"+name+"\n#0")
+                
 
+
+    # with open("cookies/labels.txt", "r") as labels_f:
+    #     labels_string_builder = ""
+    #     for line in labels_f:
+    #         labels_string_builder += '"' + line.strip("\n") +'"' + ","
+    #     print(labels_string_builder[:-1])
+    #     labels = eval(labels_string_builder[:-1])
+    
+    print(labels)
+    #autoIncrement()
+    labels = counterList()
     return render_template("index.html", labels=labels)
 
 @app.route('/outofcontext', methods=['GET', 'POST'])
@@ -75,3 +100,41 @@ def quoteList():
             if temp[0].strip() !="":
                 quotes.append(temp)
     return quotes
+
+def counterList():
+    counters = []
+    with open("cookies/labels.txt", "r") as counters_f:
+        lines = counters_f.readlines()
+        line = ""
+        for l in lines:
+            line+=l
+        lines = line.split("#")[1:]
+        print(lines)
+        for i in range(0,len(lines),2):
+            l = lines[i].strip()
+            count = lines[i+1].strip()
+            if l.strip() !="":
+                if l.find("auto") ==0:
+                    l = l[4:]
+                counters.append(l + ": " + count)
+    return counters
+def autoIncrement():
+    counters = []
+    with open("cookies/labels.txt", "r") as counters_f:
+        lines = counters_f.readlines()
+        line = ""
+        for l in lines:
+            line+=l
+        lines = line.split("#")[1:]
+        print(lines)
+        for i in range(0,len(lines),2):
+            l = lines[i].strip()
+            count = lines[i+1].strip()
+            if l.strip() !="":
+                if l.find("auto") ==0:
+                    count = str(int(count) + 1)
+                counters.append(l)
+                counters.append(count)
+    with open("cookies/labels.txt", "w") as counters_f:
+        for l in counters:
+            counters_f.write("#"+l+"\n")

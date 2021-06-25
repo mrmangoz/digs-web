@@ -1,2 +1,4 @@
-Days without Chris - total
-Days without Chris - streak
+#Days without Chris - total
+#0
+#autoDays without Chris - streak
+#0

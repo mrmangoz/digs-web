@@ -5,10 +5,13 @@
 	<label for="new">Add new tally</label><br>
 	<label for="tally_name">Tally name</label><br>
 	<input name="new_tally_name"><br>
-	<input type="button" onClick="window.location.href='/index'" value="Add Tally"/><br>
+	<!--<input type="button" onClick="window.location.href='/index'" value="Add Tally"/>-->
+	<button type="submit" name="addtally" value="addtally" >Add Tally</button>
+	<label>Auto-increment</label> 
+	<input type="checkbox" name="autoincrement" value="autoincrement" id="autoincrement"><br>
 	<label for="tallies">Tallies:</label><br>
 	{% for label in labels %}
-	<label for={{loop.index}}>{{label}}:</label><br>
+	<label for={{loop.index}}>{{label}}</label><br>
 	{% endfor %}
 
 
