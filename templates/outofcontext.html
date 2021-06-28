@@ -1,0 +1,35 @@
+<form action="/outofcontext" method="POST">
+	<button type="submit" name="counters" id="counters" value="counters">Counters</button>
+	<button type="submit" name="quotes" id="quotes"value="quotes">Quotes</button><br>
+	<h1>The Enchiridion</h1>
+	<textarea id="newquote" name="newquote" rows="5" cols="50"></textarea>
+	<br>
+	<select name="homies" id="homies">
+		<option value="Cameron">Cameron</option>
+		<option value="Chris">Chris</option>
+		<option value="Ciaran">Ciaran</option>
+		<option value="Oliver">Oliver</option>
+		<option value="Rachel">Rachel</option>
+		<option value="Rose">Rose</option>
+	</select>
+	<button type="submit" name="postquote" value="postquote" >Post</button><br><br>
+
+	{% for quote in quotes %}
+		<div id="quotediv" style="border-style: solid; border-top-color: blue; border-bottom-color: darkred; border-width: 1px;">
+		
+		<p style="padding: 1rem;">{{quote[0] }}</p>	
+		<p style="padding: 1rem;">-{{quote[1] }} {{quote[2] }}</p>	
+		
+		<button type="submit" name="{{loop.index}}" value="{{loop.index}}" >Delete</button>
+		</div>
+		<br>
+	{% endfor %}
+	
+		
+		
+		
+		
+	
+
+
+</form>

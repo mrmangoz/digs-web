@@ -1,7 +1,22 @@
 <form action="/index" method="POST">
+	<button type="submit" name="counters" id="counters" value="counters">Counters</button>
+	<button type="submit" name="quotes" id="quotes"value="quotes">Quotes</button><br>
 	<h1>DIGS COUNTERS</h1>
-	<label for="chris_counter">Chris Counter:</label><br>
-
+	<label for="new">Add new tally</label><br>
+	<label for="tally_name">Tally name</label><br>
+	<input name="new_tally_name"><br>
+	<!--<input type="button" onClick="window.location.href='/index'" value="Add Tally"/>-->
+	<button type="submit" name="addtally" value="addtally" >Add Tally</button>
+	<label>Auto-increment</label> 
+	<input type="checkbox" name="autoincrement" value="autoincrement" id="autoincrement"><br><br>
+	<label for="tallies">Tallies:</label><br><br>
+	{% for label in labels %}
+		<label for={{loop.index}}>{{label[0] }} - {{label[2] }}</label><br>
+		<button type="submit" name="{{loop.index}}d" value="{{loop.index}}d" >Delete</button>
+		<button type="submit" name="{{loop.index}}+" value="{{loop.index}}+" >+</button>
+		<button type="submit" name="{{loop.index}}-" value="{{loop.index}}-" >-</button>
+		<button type="submit" name="{{loop.index}}r" value="{{loop.index}}r" >Reset</button><br>
+	{% endfor %}
 
 
 </form>
