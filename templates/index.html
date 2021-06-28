@@ -11,7 +11,7 @@
 	<input type="checkbox" name="autoincrement" value="autoincrement" id="autoincrement"><br>
 	<label for="tallies">Tallies:</label><br>
 	{% for label in labels %}
-	<label for={{loop.index}}>{{label}}</label><br>
+		<label for={{loop.index}}>{{label[0] }} - {{label[2] }}</label><br>
 	{% endfor %}
 
 

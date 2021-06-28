@@ -16,10 +16,11 @@
 
 	{% for quote in quotes %}
 		<div id="quotediv" style="border-style: solid; border-top-color: blue; border-bottom-color: darkred; border-width: 1px;">
-		{% for sentence in quote %}
-			<p style="padding: 1rem;">{{sentence}}</p>	
-		{% endfor %}
-		<button type="submit" name="{{quote[0] }}{{quote[1] }}" value="{{quote[0] }}{{quote[1] }}" >Delete</button>
+		
+		<p style="padding: 1rem;">{{quote[0] }}</p>	
+		<p style="padding: 1rem;">-{{quote[1] }} {{quote[2] }}</p>	
+		
+		<button type="submit" name="{{loop.index}}" value="{{loop.index}}" >Delete</button>
 		</div>
 		<br>
 	{% endfor %}

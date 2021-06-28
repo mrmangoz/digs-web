@@ -1,4 +1,1 @@
-#Days without Chris - total
-#0
-#autoDays without Chris - streak
-#0
+[['Days since 28/06/2021', True, 0]]
