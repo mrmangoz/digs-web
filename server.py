@@ -36,23 +36,28 @@ def form():
             for l in labels:
                 if name in l[0]:
                     dupe = True
-            if not dupe:
+            if not dupe and name.strip()!="":
                 new_counter = [name,increment,0]
                 labels.append(new_counter)
-                with open("cookies/labels.txt","w") as labels_f:
-                    labels_f.write(str(labels))
-                
-
-
-    # with open("cookies/labels.txt", "r") as labels_f:
-    #     labels_string_builder = ""
-    #     for line in labels_f:
-    #         labels_string_builder += '"' + line.strip("\n") +'"' + ","
-    #     print(labels_string_builder[:-1])
-    #     labels = eval(labels_string_builder[:-1])
+        else:
+            for i in range(len(labels)):
+                if request.form.get(str(i+1)+"d"):
+                    labels.remove(labels[i])
+                    break
+                elif request.form.get(str(i+1)+"+"):
+                    labels[i][2]+=1
+                    break
+                elif request.form.get(str(i+1)+"-"):
+                    labels[i][2]-=1
+                    break
+                elif request.form.get(str(i+1)+"r"):
+                    labels[i][2]=0
+                    break
+        with open("cookies/labels.txt","w") as labels_f:
+            labels = sortList(labels)
+            labels_f.write(str(labels))
     
-    print(labels)
-    #autoIncrement()
+    #print(labels)
     labels = getList("cookies/labels.txt")
     return render_template("index.html", labels=labels)
 
@@ -97,6 +102,21 @@ def getList(file):
         if line.strip()=="":
             line="[]"
         return eval(line)
+        
+def sortList(labels):
+    for i in range(len(labels)):
+        maxi = i
+        for k in range(i,len(labels)):
+            if labels[k][2]>labels[maxi][2]:
+                maxi = k
+        temp = labels[i]
+        labels[i] = labels[maxi]
+        labels[maxi] = temp
+    return labels
+
+
+
+
 
 def autoIncrement():
     counters = getList("cookies/labels.txt")
