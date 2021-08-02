@@ -1,17 +1,17 @@
+from typing import OrderedDict
 from flask import Flask, request, render_template, flash, make_response, redirect, url_for
 import datetime
-import dateutil.parser
 import time
 import atexit
-
-from werkzeug.utils import secure_filename
+import os 
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
 app = Flask(__name__)
 app.secret_key = "dev"
-
-
+searchKey = ''
+filters = ['','']
+showComplete = False
 
 @app.route('/')
 def index():
@@ -24,6 +24,8 @@ def form():
     if request.method =="POST":
         if request.form.get("quotes"):
             return quotes()
+        elif request.form.get("lego"):
+            return lego()
         elif request.form.get("addtally"):
             try: 
                 request.form["autoincrement"]
@@ -75,6 +77,8 @@ def quotes():
                     quotes_f.write(str(quotes))
         elif request.form.get("counters"):
             return form()
+        elif request.form.get("lego"):
+            return lego()
         else:
             quotes = getList("cookies/quotes.txt")
             for i in range(len(quotes)):
@@ -91,6 +95,204 @@ def quotes():
         #print(quotes)
     quotes = getList("cookies/quotes.txt")            
     return render_template("outofcontext.html", quotes=quotes)
+
+@app.route('/lego', methods=['GET', 'POST'])
+def lego():
+    sets = getSetList()
+    partsd = getPartDict(getSetList()[0])[1:]
+    #print(partsd)
+    #partsd = sorted(partsd, key = lambda i: (i['Have'], i['Missing'],i['Quantity']))
+    parts = getPartList(partsd)
+    print(sets)
+    if request.method =="POST":
+        # for i in range(len(parts)):
+        #     print("")
+        changeCount = False
+        for i in range(len(partsd)):
+                if request.form.get(str(partsd[i]['PartID'])+"+") or request.form.get(str(partsd[i]['PartID'])+"-"):
+                    changeCount = True
+        if request.form.get("counters"):
+            return form()
+        elif request.form.get("quotes"):
+            return quotes()
+        elif request.form.get("getparts") or request.form.get("go") or changeCount:
+        
+            
+            try:
+                catFilter = request.form.getlist("category")
+            except: catFilter = ''
+            try:
+                colFilter = request.form.getlist("colour")
+            except: colFilter = ''
+            try:
+                request.form['showcomplete']
+                showComplete = True
+            except:
+                showComplete = False
+            #print(catFilter,colFilter)
+            #if request.form.get("getparts") or request.form.get("go"):
+            searchKey = request.form['search']
+            if request.form.get("getparts"):
+                showComplete = False
+                colFilter = ''
+                catFilter = ''
+                searchKey = ''
+            #if request.form.get("getparts") or request.form.get("go"):
+            setnum = request.form["set"]
+            setnum = setnum[:setnum.find("set")]
+            setName = getSetList()[int(setnum)-1]
+            partsd = getPartDict(setName)
+            for i in range(len(partsd)):
+                if request.form.get(str(partsd[i]['PartID'])+"+"):
+                    partsd = increment(setName,partsd[i]['PartID'],1)
+                    break
+                elif request.form.get(str(partsd[i]['PartID'])+"-"):
+                    partsd = increment(setName,partsd[i]['PartID'],-1)
+                    break
+            if showComplete == False:
+                partsd = removeCompleted(partsd)
+            partsd = filter(partsd,catFilter,colFilter)
+            partsd = search(partsd,searchKey)
+            #print(partsd[293])
+            
+            partsd = sorted(partsd, key = lambda i: (i['Have'],i['Missing'],i['Quantity']),reverse=True)
+             
+            parts = getPartList(partsd)
+            return render_template("lego.html", parts=parts,sets=sets,
+            categories=getColLists(partsd,"Category"),
+            colours=getColLists(partsd,"Colour"),
+            search=searchKey,
+            filteredby=str(filters[0])+str(filters[1]),
+            showComplete = showComplete)
+
+       
+        
+    #parts = getList("cookies/quotes.txt")           
+    return render_template("lego.html",sets=sets)
+
+def sortd(d,col):
+    sortList(d)
+    return d
+
+def removeCompleted(d):
+    temp = []
+    for r in d:
+        if r['Missing'] != 0:
+            temp.append(r)
+    return temp
+def increment(set,partID,amount):
+    partsd = getPartDict(set)
+    d = {"SetNumber":"","PartID":0,"Quantity":0,"Colour":"","Category":"","DesignID":0,"PartName":"","ImageURL":"","SetCount":0,"Have":0,"Missing":0}
+
+    f = open("data/"+set,'w',encoding='utf-8')
+    f.write(str(list(d.keys()))[1:-1].replace("'",'"'))
+    f.write('\n')
+    for di in partsd:
+        if di['PartID'] == partID:
+            if di['Have']+amount<=di['Quantity'] and di['Have']+amount>=0:
+                di['Have']+=amount
+            di['Missing'] = di['Quantity'] - di['Have']
+    
+    #print(str(list(d[1].values()))[1:-1].replace("'",'"').replace(", ",',')) 
+        f.write('"'+str(list(di.values()))[2:-1].replace(", ",',').replace("','",'","').replace("',",'",').replace(",'",',"'))
+        f.write('\n')
+    f.close()
+    return getPartDict(set)
+    
+
+
+
+def filter(d,categories=filters[0],colours=filters[1]):
+    #filter
+    if categories!=filters[0]:
+        filters[0] = categories
+    if colours!=filters[0]:
+        filters[1] = colours
+    if len(categories) == 0 and len(colours) == 0:
+        return d
+    temp = []
+    for r in d:
+        if len(categories) == 0 or len(colours) == 0:
+            if r['Category'] in categories or r['Colour'] in colours:
+                temp.append(r)
+        else:
+            if r['Category'] in categories and r['Colour'] in colours:
+                temp.append(r)
+    return temp
+
+def search(d, key = searchKey):
+    temp = []
+    if key =="":
+        return d
+    for r in d:
+        if key.lower() in str(r.values()).lower():
+            temp.append(r)
+    return temp
+def getColLists(d,col):
+    l = []
+    for r in d:
+        if not r[col] in l:
+            l.append(r[col])
+    return l
+
+
+def getSetList():
+    return os.listdir("data")
+def getPartDict(set):
+    d = {"SetNumber":"","PartID":0,"Quantity":0,"Colour":"","Category":"","DesignID":0,"PartName":"","ImageURL":"","SetCount":0,"Have":0,"Missing":0}
+    #"10188-1",9339,6,"Black","Figure Parts",73200,"MINI BODY LOWER PART BLACK","https://www.lego.com/cdn/product-assets/element.img.lod5photo.192x192/9339.jpg",899
+    #"10188-1",249626,2,"Black","Tyres And Rims, Special",2496,"WHEEL AXLE Ø8.2/Ø1.9","https://www.lego.com/cdn/product-assets/element.img.lod5photo.192x192/249626.jpg",280
+    f = open("data/"+set,'r',encoding='utf-8')
+    l = f.readlines()
+    parts = []
+    keys = list(d.keys())
+    l = l[1:]
+    #print(len(l))
+    #return keys
+    for li in l:
+        temp = processRecord(li)
+        tempD = d.copy()
+        #print(temp)
+        for i in range(len(temp)):
+            try:
+                tempD[keys[i]] = temp[i]
+            except:
+                print(i)
+       
+        if tempD['Quantity'] != 0:
+            tempD['Missing'] = int(tempD['Quantity']) - int(tempD['Have'])
+            parts.append(tempD)
+            
+    #print(parts[0])
+    #print(parts[1])
+    return parts
+
+def processRecord(r):
+    l = []
+    #print(r)
+    r = r.strip()
+    while(len(r)>0):
+        if r[0] == '"':
+            r = r[1:]
+            l.append(str(r[:r.index('"')]))
+            r = r[r.index('"')+2:]
+        else:
+            if r.find(",") != -1:
+                l.append(int(r[:r.index(',')]))
+                r = r[r.index(',')+1:]
+            else:
+                l.append(int(r))
+                r = ''
+
+    return l
+
+        
+
+def getPartList(d):
+    parts = []
+    for di in d:
+        parts.append(list(di.values()))
+    return parts
 
 
 def getList(file):

@@ -1,6 +1,7 @@
 <form action="/index" method="POST">
 	<button type="submit" name="counters" id="counters" value="counters">Counters</button>
-	<button type="submit" name="quotes" id="quotes"value="quotes">Quotes</button><br>
+	<button type="submit" name="quotes" id="quotes"value="quotes">Quotes</button>
+	<button type="submit" name="lego" id="lego"value="lego">Lego</button><br>
 	<h1>DIGS COUNTERS</h1>
 	<label for="new">Add new tally</label><br>
 	<label for="tally_name">Tally name</label><br>
@@ -12,10 +13,8 @@
 	<label for="tallies">Tallies:</label><br><br>
 	{% for label in labels %}
 		<label for={{loop.index}}>{{label[0] }} - {{label[2] }}</label><br>
-		<button type="submit" name="{{loop.index}}d" value="{{loop.index}}d" >Delete</button>
 		<button type="submit" name="{{loop.index}}+" value="{{loop.index}}+" >+</button>
 		<button type="submit" name="{{loop.index}}-" value="{{loop.index}}-" >-</button>
-		<button type="submit" name="{{loop.index}}r" value="{{loop.index}}r" >Reset</button><br>
 	{% endfor %}
 
 

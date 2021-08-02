@@ -1,0 +1,46 @@
+<form action="/lego" method="POST">
+	<button type="submit" name="counters" id="counters" value="counters">Counters</button>
+	<button type="submit" name="quotes" id="quotes"value="quotes">Quotes</button>
+	<button type="submit" name="lego" id="lego"value="lego">Lego</button><br>
+	<h1>Part List</h1>
+	<br>
+	<select name="set" id="set">
+		{% for set in sets %}
+			<option value="{{loop.index}}set">{{set}}</option>
+		{% endfor %}
+		
+	</select>
+	
+	<button type="submit" name="getparts" value="getparts" >Load</button><br><br>
+	<select name="category" id="category" multiple style="height: 15rem; width: 18rem;">
+		{% for category in categories %}
+			<option value="{{category}}">{{category}}</option>
+		{% endfor %}
+	</select>
+
+	<select name="colour" id="colour" multiple style="height: 15rem; width: 18rem;">
+		{% for colour in colours %}
+			<option value="{{colour}}">{{colour}}</option>
+		{% endfor %}
+	</select>
+	<br>
+	<input name="search" value = {{search}}>
+	<button type="go" name="go" id="go"value="go">Filter and Search</button><br>
+	<label>Show Completed</label> 
+	<input type="checkbox" name="showcomplete" value= "showcomplete"  id="showcomplete" {{'checked' if showComplete else ""}}><br>
+	<br>
+	{% for part in parts %}
+		<img src = "{{part[7]}}" alt = "{{part[6]}}" height = "60rem" width = "60rem">
+		<label for={{part[1]}} style="color:'{{part[3]}}'"><br>Have: {{part[9]}}/{{part[2] }}<br>Category: {{part[4] }}<br>Name: {{part[6]}} </label><br>
+		<button type="submit" name="{{part[1]}}+" value="{{part[1]}}+" >+</button>
+		<button type="submit" name="{{part[1]}}-" value="{{part[1]}}-" >-</button><br>
+	{% endfor %}
+	
+		
+		
+		
+		
+	
+
+
+</form>
